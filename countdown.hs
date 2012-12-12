@@ -1,5 +1,20 @@
-data Op = Add | Sub | Mul | Div deriving Show
-data Expr = Val Int | App Op Expr Expr deriving Show
+data Op = Add | Sub | Mul | Div
+data Expr = Val Int | App Op Expr Expr
+
+instance Show Op where
+    show Add = "+"
+    show Sub = "-"
+    show Mul = "x"
+    show Div = "/"
+
+instance Show Expr where
+    show (Val w) = show w
+    show (App o l r) = show l ++ " " ++ show o ++ " " ++ show r
+
+    showList [] = showString "[]"
+    showList (e:es) = showChar '[' . shows e . showl es 
+        where showl [] = showChar ']'
+              showl (e:es) = showString ",\n " . shows e . showl es
 
 valid :: Op -> Int -> Int -> Bool
 valid Add _ _ = True
