@@ -1,3 +1,5 @@
+import Data.List
+
 data Op = Add | Sub | Mul | Div
 data Expr = Val Int | App Op Expr Expr
 
@@ -33,6 +35,7 @@ instance Eq Expr where
                     | o == Sub || o == Div = non_commutative e f g h
                         where commutative e f g h = ((e == g) && (f == h)) || ((e == h) && (f == g))
                               non_commutative e f g h = (e == g) && (f == h)
+    _ == _  = False
 
 
 valid :: Op -> Int -> Int -> Bool
@@ -89,5 +92,7 @@ ops = [Add,Sub,Mul,Div]
 combine :: Expr -> Expr -> [Expr]
 combine l r = [App o l r | o <- ops]
 
-solutions :: [Int] -> Int -> [Expr]
-solutions ns n = [e | n' <- choices ns, e <- exprs n', eval e == [n]]
+findAllSolutions :: [Int] -> Int -> [Expr]
+findAllSolutions ns n = nub $ [e | n' <- nub $ choices ns, e <- nub $ exprs n', eval e == [n]]
+
+findASolution ns n = head $ findAllSolutions ns n
