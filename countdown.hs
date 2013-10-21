@@ -16,6 +16,25 @@ instance Show Expr where
         where showl [] = showChar ']'
               showl (e:es) = showString ",\n " . shows e . showl es
 
+instance Eq Op where
+    Add == Add = True
+    Sub == Sub = True
+    Mul == Mul = True
+    Div == Div = True
+    a   == b   = False
+
+instance Eq Expr where
+    Val i     == Val j = i == j
+    App o e f == App p g h 
+        | o == p = matching_expr o e f g h
+        | otherwise = False
+            where matching_expr o e f g h
+                    | o == Add || o == Mul = commutative e f g h
+                    | o == Sub || o == Div = non_commutative e f g h
+                        where commutative e f g h = ((e == g) && (f == h)) || ((e == h) && (f == g))
+                              non_commutative e f g h = (e == g) && (f == h)
+
+
 valid :: Op -> Int -> Int -> Bool
 valid Add _ _ = True
 valid Sub x y = x > y
